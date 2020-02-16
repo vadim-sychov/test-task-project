@@ -1,0 +1,28 @@
+framework:
+    messenger:
+        transports:
+            user_create:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: amq.direct
+                        type: direct
+                        default_publish_routing_key: user_create
+                    queues:
+                        user_create_queue:
+                            binding_keys: [user_create]
+
+            tracking_data_create:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: amq.direct
+                        type: direct
+                        default_publish_routing_key: tracking_data_create
+                    queues:
+                        tracking_data_create_queue:
+                            binding_keys: [tracking_data_create]
+
+        routing:
+            'App\Message\UserRegistrationMessage': user_create
+            # TODO add tracking_data_create handler
