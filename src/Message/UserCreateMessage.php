@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Message;
 
-class UserRegistrationMessage
+class UserCreateMessage
 {
     /** @var string */
     private $firstName;
@@ -18,12 +18,12 @@ class UserRegistrationMessage
     private $age;
 
     /** @var string */
-    private $passport;
+    private $password;
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getFirstName(): string
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
@@ -37,9 +37,9 @@ class UserRegistrationMessage
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getLastName(): string
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
@@ -53,9 +53,9 @@ class UserRegistrationMessage
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getNickname(): string
+    public function getNickname(): ?string
     {
         return $this->nickname;
     }
@@ -69,9 +69,9 @@ class UserRegistrationMessage
     }
 
     /**
-     * @return int
+     * @return null|int
      */
-    public function getAge(): int
+    public function getAge(): ?int
     {
         return $this->age;
     }
@@ -85,18 +85,18 @@ class UserRegistrationMessage
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getPassport(): string
+    public function getPassword(): ?string
     {
-        return $this->passport;
+        return $this->password;
     }
 
     /**
-     * @param string $passport
+     * @param string $password
      */
-    public function setPassport(string $passport): void
+    public function setPassword(string $password): void
     {
-        $this->passport = $passport;
+        $this->password = $password;
     }
 }
