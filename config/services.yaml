@@ -34,11 +34,11 @@ services:
                   - '%env(REDIS_HOST)%'
                   - '%env(REDIS_PORT)%'
 
-    App\Controller\UserController:
+    App\Controller\Api\UserController:
         arguments:
             $routingKey: '%routing_key.user_create%'
 
-    App\Controller\TrackingDataController:
+    App\Controller\Api\TrackingDataController:
         arguments:
             $routingKey: '%routing_key.tracking_data_create%'
 
