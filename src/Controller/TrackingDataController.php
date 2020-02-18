@@ -17,6 +17,17 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TrackingDataController extends AbstractController
 {
+    /** @var string */
+    private $routingKey;
+
+    /**
+     * @param string $routingKey
+     */
+    public function __construct(string $routingKey)
+    {
+        $this->routingKey = $routingKey;
+    }
+
     /**
      * @Route("/", name="create", methods={"POST"})
      *
@@ -31,7 +42,7 @@ class TrackingDataController extends AbstractController
         $form->submit(json_decode($request->getContent(),true));
 
         if ($form->isValid()) {
-            $this->dispatchMessage($trackingDataMessage, [new AmqpStamp('tracking_data_create')]);
+            $this->dispatchMessage($trackingDataMessage, [new AmqpStamp($this->routingKey)]);
 
             return new JsonResponse(['status' => 'success']);
         }

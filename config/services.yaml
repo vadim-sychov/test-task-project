@@ -4,7 +4,9 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    storagePath: '%kernel.project_dir%/storage'
+    storage_path: '%kernel.project_dir%/storage'
+    routing_key.user_create: 'user_create'
+    routing_key.tracking_data_create: 'tracking_data_create'
 
 services:
     # default configuration for services in *this* file
@@ -32,16 +34,24 @@ services:
                   - '%env(REDIS_HOST)%'
                   - '%env(REDIS_PORT)%'
 
+    App\Controller\UserController:
+        arguments:
+            $routingKey: '%routing_key.user_create%'
+
+    App\Controller\TrackingDataController:
+        arguments:
+            $routingKey: '%routing_key.tracking_data_create%'
+
     App\Cache\CacheInterface:
         class: App\Cache\RedisCache
 
     App\Repository\UserRepository:
         arguments:
-            $storagePath: '%storagePath%/%env(STORAGE_FILENAME_USERS)%.json'
+            $storagePath: '%storage_path%/%env(STORAGE_FILENAME_USERS)%.json'
 
     App\Repository\TrackingDataRepository:
         arguments:
-            $storagePath: '%storagePath%/%env(STORAGE_FILENAME_TRACKING_DATA)%.json'
+            $storagePath: '%storage_path%/%env(STORAGE_FILENAME_TRACKING_DATA)%.json'
 
     SocialTech\SlowStorage:
         class: SocialTech\SlowStorage

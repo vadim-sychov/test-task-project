@@ -17,6 +17,17 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class UserController extends AbstractController
 {
+    /** @var string */
+    private $routingKey;
+
+    /**
+     * @param string $routingKey
+     */
+    public function __construct(string $routingKey)
+    {
+        $this->routingKey = $routingKey;
+    }
+
     /**
      * @Route("/", name="create", methods={"POST"})
      *
@@ -31,7 +42,7 @@ class UserController extends AbstractController
         $form->submit(json_decode($request->getContent(),true));
 
         if ($form->isValid()) {
-            $this->dispatchMessage($userMessage, [new AmqpStamp('user_create')]);
+            $this->dispatchMessage($userMessage, [new AmqpStamp($this->routingKey)]);
 
             return new JsonResponse(['status' => 'success']);
         }
