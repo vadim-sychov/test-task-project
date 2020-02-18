@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Form\UserCreateType;
-use App\Message\UserMessage;
+use App\Form\TrackingDataCreateType;
+use App\Message\TrackingDataMessage;
+use SocialTech\StorageInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use SocialTech\StorageInterface;
 use Symfony\Component\Messenger\Transport\AmqpExt\AmqpStamp;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/api/users", name="api_users_")
+ * @Route("/api/tracking-data", name="api_tracking_data_")
  */
-class UserController extends AbstractController
+class TrackingDataController extends AbstractController
 {
     /**
      * @Route("/", name="create", methods={"POST"})
@@ -25,13 +25,13 @@ class UserController extends AbstractController
      */
     public function createAction(Request $request): JsonResponse
     {
-        $userMessage = new UserMessage();
+        $trackingDataMessage = new TrackingDataMessage();
 
-        $form = $this->createForm(UserCreateType::class, $userMessage);
+        $form = $this->createForm(TrackingDataCreateType::class, $trackingDataMessage);
         $form->submit(json_decode($request->getContent(),true));
 
         if ($form->isValid()) {
-            $this->dispatchMessage($userMessage, [new AmqpStamp('user_create')]);
+            $this->dispatchMessage($trackingDataMessage, [new AmqpStamp('tracking_data_create')]);
 
             return new JsonResponse(['status' => 'success']);
         }
@@ -55,8 +55,8 @@ class UserController extends AbstractController
     public function readAction(StorageInterface $storage): JsonResponse
     {
         //TODO check admin token
-        //TODO use UserRepository
-        $responseData = $storage->load('../storage/users.json');
+        //TODO use TrackingDataRepository
+        $responseData = $storage->load('../storage/tracking-data.json');
 
         return new JsonResponse(['status' => 'success', 'data' => json_decode($responseData, true)]);
     }

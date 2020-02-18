@@ -28,6 +28,10 @@ services:
         arguments:
             $storagePath: '%storagePath%/%env(STORAGE_FILENAME_USERS)%.json'
 
+    App\MessageHandler\TrackingDataCreateHandler:
+        arguments:
+            $storagePath: '%storagePath%/%env(STORAGE_FILENAME_TRACKING_DATA)%.json'
+
     SocialTech\SlowStorage:
         class: SocialTech\SlowStorage
 

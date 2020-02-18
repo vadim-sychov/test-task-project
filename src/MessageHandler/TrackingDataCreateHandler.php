@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
-use App\Message\UserMessage;
+use App\Message\TrackingDataMessage;
 use SocialTech\StorageInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class UserCreateHandler implements MessageHandlerInterface
+class TrackingDataCreateHandler implements MessageHandlerInterface
 {
     /** @var StorageInterface */
     private $jsonStorage;
@@ -26,24 +26,22 @@ class UserCreateHandler implements MessageHandlerInterface
     }
 
     /**
-     * @param UserMessage $user
+     * @param TrackingDataMessage $trackingData
      */
-    public function __invoke(UserMessage $user)
+    public function __invoke(TrackingDataMessage $trackingData)
     {
-        $userData[$user->getNickname()] = [
-            "firstname" => $user->getFirstName(),
-            "lastname" => $user->getLastName(),
-            "password" => $user->getPassword(),
-            "age" => $user->getAge()
+        $trackingData = [
+            "id_user" => $trackingData->getUserId(),
+            "source_label" => $trackingData->getSourceLabel(),
+            "date_created" => $trackingData->getCreatedDate()->format('Y-m-d H:i:s')
         ];
 
         //TODO генерировать уникальный ID через автоинкремент
-        //TODO хешировать пароль когда сделаю систему аутентификации
 
         if ($this->jsonStorage->exists($this->storagePath)) {
-            $this->jsonStorage->append($this->storagePath, json_encode($userData));
+            $this->jsonStorage->append($this->storagePath, json_encode($trackingData));
         } else {
-            $this->jsonStorage->store($this->storagePath, json_encode($userData));
+            $this->jsonStorage->store($this->storagePath, json_encode($trackingData));
         }
     }
 }
