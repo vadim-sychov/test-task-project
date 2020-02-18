@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Message;
+namespace App\ValueObject;
 
 use DateTimeImmutable;
 
-class TrackingDataMessage
+class TrackingData
 {
     /** @var string */
     private $userId;

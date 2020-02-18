@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Message\TrackingDataMessage;
+use App\ValueObject\TrackingData;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,7 +31,7 @@ class TrackingDataCreateType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => TrackingDataMessage::class,
+            'data_class' => TrackingData::class,
             'csrf_protection' => false
         ]);
     }

@@ -26,6 +26,13 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    Symfony\Component\HttpFoundation\Request:
+        class: Symfony\Component\HttpFoundation\Request
+
+    App\Controller\Api\AuthController:
+        arguments:
+            $request: '@Symfony\Component\HttpFoundation\Request'
+
     Redis:
         class: Redis
         calls:
@@ -44,6 +51,8 @@ services:
 
     App\Cache\CacheInterface:
         class: App\Cache\RedisCache
+        arguments:
+            $tokenCacheDataExpiresAt: '%env(TOKEN_CACHE_DATA_EXPIRES_AT)%'
 
     App\Repository\UserRepository:
         arguments:
