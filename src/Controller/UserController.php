@@ -5,10 +5,10 @@ namespace App\Controller;
 
 use App\Form\UserCreateType;
 use App\Message\UserMessage;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use SocialTech\StorageInterface;
 use Symfony\Component\Messenger\Transport\AmqpExt\AmqpStamp;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -17,6 +17,17 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class UserController extends AbstractController
 {
+    /** @var string */
+    private $routingKey;
+
+    /**
+     * @param string $routingKey
+     */
+    public function __construct(string $routingKey)
+    {
+        $this->routingKey = $routingKey;
+    }
+
     /**
      * @Route("/", name="create", methods={"POST"})
      *
@@ -31,7 +42,7 @@ class UserController extends AbstractController
         $form->submit(json_decode($request->getContent(),true));
 
         if ($form->isValid()) {
-            $this->dispatchMessage($userMessage, [new AmqpStamp('user_create')]);
+            $this->dispatchMessage($userMessage, [new AmqpStamp($this->routingKey)]);
 
             return new JsonResponse(['status' => 'success']);
         }
@@ -49,15 +60,14 @@ class UserController extends AbstractController
      *
      * @Route("/", name="read", methods={"GET"})
      *
-     * @param StorageInterface $storage
+     * @param UserRepository $userRepository
      * @return JsonResponse
      */
-    public function readAction(StorageInterface $storage): JsonResponse
+    public function readAction(UserRepository $userRepository): JsonResponse
     {
         //TODO check admin token
-        //TODO use UserRepository
-        $responseData = $storage->load('../storage/users.json');
+        $responseData = $userRepository->fetchAll();
 
-        return new JsonResponse(['status' => 'success', 'data' => json_decode($responseData, true)]);
+        return new JsonResponse(['status' => 'success', 'data' => $responseData]);
     }
 }

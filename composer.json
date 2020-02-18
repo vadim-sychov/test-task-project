@@ -16,7 +16,8 @@
         "symfony/messenger": "4.4.*",
         "symfony/security": "4.4.*",
         "symfony/validator": "4.4.*",
-        "symfony/yaml": "4.4.*"
+        "symfony/yaml": "4.4.*",
+        "ext-redis": "*"
     },
     "repositories": [
         {
