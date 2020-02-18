@@ -4,46 +4,28 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Message\UserMessage;
+use App\Repository\UserRepository;
 use SocialTech\StorageInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class UserCreateHandler implements MessageHandlerInterface
 {
-    /** @var StorageInterface */
-    private $jsonStorage;
-
-    /** @var string */
-    private $storagePath;
+    /** @var UserRepository */
+    private $userRepository;
 
     /**
-     * @param StorageInterface $jsonStorage
-     * @param string $storagePath
+     * @param UserRepository $userRepository
      */
-    public function __construct(StorageInterface $jsonStorage, string $storagePath)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->jsonStorage = $jsonStorage;
-        $this->storagePath = $storagePath;
+        $this->userRepository = $userRepository;
     }
 
     /**
-     * @param UserMessage $user
+     * @param UserMessage $userMessage
      */
-    public function __invoke(UserMessage $user)
+    public function __invoke(UserMessage $userMessage)
     {
-        $userData[$user->getNickname()] = [
-            "firstname" => $user->getFirstName(),
-            "lastname" => $user->getLastName(),
-            "password" => $user->getPassword(),
-            "age" => $user->getAge()
-        ];
-
-        //TODO генерировать уникальный ID через автоинкремент
-        //TODO хешировать пароль когда сделаю систему аутентификации
-
-        if ($this->jsonStorage->exists($this->storagePath)) {
-            $this->jsonStorage->append($this->storagePath, json_encode($userData));
-        } else {
-            $this->jsonStorage->store($this->storagePath, json_encode($userData));
-        }
+        $this->userRepository->createFromMessage($userMessage);
     }
 }

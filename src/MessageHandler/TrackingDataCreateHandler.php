@@ -4,44 +4,27 @@ declare(strict_types=1);
 namespace App\MessageHandler;
 
 use App\Message\TrackingDataMessage;
-use SocialTech\StorageInterface;
+use App\Repository\TrackingDataRepository;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class TrackingDataCreateHandler implements MessageHandlerInterface
 {
-    /** @var StorageInterface */
-    private $jsonStorage;
-
-    /** @var string */
-    private $storagePath;
+    /** @var TrackingDataRepository */
+    private $trackingDataRepository;
 
     /**
-     * @param StorageInterface $jsonStorage
-     * @param string $storagePath
+     * @param TrackingDataRepository $trackingDataRepository
      */
-    public function __construct(StorageInterface $jsonStorage, string $storagePath)
+    public function __construct(TrackingDataRepository $trackingDataRepository)
     {
-        $this->jsonStorage = $jsonStorage;
-        $this->storagePath = $storagePath;
+        $this->trackingDataRepository = $trackingDataRepository;
     }
 
     /**
-     * @param TrackingDataMessage $trackingData
+     * @param TrackingDataMessage $trackingDataMessage
      */
-    public function __invoke(TrackingDataMessage $trackingData)
+    public function __invoke(TrackingDataMessage $trackingDataMessage)
     {
-        $trackingData = [
-            "id_user" => $trackingData->getUserId(),
-            "source_label" => $trackingData->getSourceLabel(),
-            "date_created" => $trackingData->getCreatedDate()->format('Y-m-d H:i:s')
-        ];
-
-        //TODO генерировать уникальный ID через автоинкремент
-
-        if ($this->jsonStorage->exists($this->storagePath)) {
-            $this->jsonStorage->append($this->storagePath, json_encode($trackingData));
-        } else {
-            $this->jsonStorage->store($this->storagePath, json_encode($trackingData));
-        }
+        $this->trackingDataRepository->createFromMessage($trackingDataMessage);
     }
 }

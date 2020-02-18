@@ -5,7 +5,7 @@ namespace App\Controller;
 
 use App\Form\TrackingDataCreateType;
 use App\Message\TrackingDataMessage;
-use SocialTech\StorageInterface;
+use App\Repository\TrackingDataRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,15 +49,14 @@ class TrackingDataController extends AbstractController
      *
      * @Route("/", name="read", methods={"GET"})
      *
-     * @param StorageInterface $storage
+     * @param TrackingDataRepository $trackingDataRepository
      * @return JsonResponse
      */
-    public function readAction(StorageInterface $storage): JsonResponse
+    public function readAction(TrackingDataRepository $trackingDataRepository): JsonResponse
     {
         //TODO check admin token
-        //TODO use TrackingDataRepository
-        $responseData = $storage->load('../storage/tracking-data.json');
+        $responseData = $trackingDataRepository->fetchAll();
 
-        return new JsonResponse(['status' => 'success', 'data' => json_decode($responseData, true)]);
+        return new JsonResponse(['status' => 'success', 'data' => $responseData]);
     }
 }
