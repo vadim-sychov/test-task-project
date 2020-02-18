@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Cache\CacheInterface;
-use App\Message\TrackingDataMessage;
+use App\ValueObject\TrackingData;
 use SocialTech\StorageInterface;
 
 /**
- * This class is used to store and fetch tracking-data from storage
+ * This class is used to save and fetch tracking-data from storage
  */
 class TrackingDataRepository
 {
@@ -34,23 +34,23 @@ class TrackingDataRepository
     }
 
     /**
-     * @param TrackingDataMessage $trackingDataMessage
+     * @param TrackingData $trackingData
      */
-    public function createFromMessage(TrackingDataMessage $trackingDataMessage): void
+    public function save(TrackingData $trackingData): void
     {
         $trackingDataId = $this->cache->getTrackingDataAutoincrement();
 
-        $trackingData[$trackingDataId] = [
+        $storageData[$trackingDataId] = [
             "id" => $trackingDataId,
-            "id_user" => $trackingDataMessage->getUserId(),
-            "source_label" => $trackingDataMessage->getSourceLabel(),
-            "date_created" => $trackingDataMessage->getCreatedDate()->format('Y-m-d H:i:s')
+            "id_user" => $trackingData->getUserId(),
+            "source_label" => $trackingData->getSourceLabel(),
+            "date_created" => $trackingData->getCreatedDate()->format('Y-m-d H:i:s')
         ];
 
         if ($this->fileStorage->exists($this->storagePath)) {
-            $this->fileStorage->append($this->storagePath, json_encode($trackingData));
+            $this->fileStorage->append($this->storagePath, json_encode($storageData));
         } else {
-            $this->fileStorage->store($this->storagePath, json_encode($trackingData));
+            $this->fileStorage->store($this->storagePath, json_encode($storageData));
         }
     }
 

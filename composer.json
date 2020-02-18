@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
+        "ext-redis": "*",
         "sensio/framework-extra-bundle": "^5.5",
         "socialtechio/slow-storage-emulator": "dev-master",
         "symfony/console": "4.4.*",
@@ -15,9 +16,9 @@
         "symfony/framework-bundle": "4.4.*",
         "symfony/messenger": "4.4.*",
         "symfony/security": "4.4.*",
+        "symfony/security-bundle": "4.4.*",
         "symfony/validator": "4.4.*",
-        "symfony/yaml": "4.4.*",
-        "ext-redis": "*"
+        "symfony/yaml": "4.4.*"
     },
     "repositories": [
         {
@@ -26,6 +27,7 @@
         }
     ],
     "require-dev": {
+        "symfony/maker-bundle": "^1.14"
     },
     "config": {
         "preferred-install": {

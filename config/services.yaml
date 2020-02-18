@@ -26,6 +26,13 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    Symfony\Component\HttpFoundation\Request:
+        class: Symfony\Component\HttpFoundation\Request
+
+    App\Controller\Api\AuthController:
+        arguments:
+            $request: '@Symfony\Component\HttpFoundation\Request'
+
     Redis:
         class: Redis
         calls:
@@ -34,16 +41,18 @@ services:
                   - '%env(REDIS_HOST)%'
                   - '%env(REDIS_PORT)%'
 
-    App\Controller\UserController:
+    App\Controller\Api\UserController:
         arguments:
             $routingKey: '%routing_key.user_create%'
 
-    App\Controller\TrackingDataController:
+    App\Controller\Api\TrackingDataController:
         arguments:
             $routingKey: '%routing_key.tracking_data_create%'
 
     App\Cache\CacheInterface:
         class: App\Cache\RedisCache
+        arguments:
+            $tokenCacheDataExpiresAt: '%env(TOKEN_CACHE_DATA_EXPIRES_AT)%'
 
     App\Repository\UserRepository:
         arguments:

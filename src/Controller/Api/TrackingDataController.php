@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Form\TrackingDataCreateType;
-use App\Message\TrackingDataMessage;
+use App\ValueObject\TrackingData;
 use App\Repository\TrackingDataRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Transport\AmqpExt\AmqpStamp;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -36,15 +37,15 @@ class TrackingDataController extends AbstractController
      */
     public function createAction(Request $request): JsonResponse
     {
-        $trackingDataMessage = new TrackingDataMessage();
+        $trackingData = new TrackingData();
 
-        $form = $this->createForm(TrackingDataCreateType::class, $trackingDataMessage);
+        $form = $this->createForm(TrackingDataCreateType::class, $trackingData);
         $form->submit(json_decode($request->getContent(),true));
 
         if ($form->isValid()) {
-            $this->dispatchMessage($trackingDataMessage, [new AmqpStamp($this->routingKey)]);
+            $this->dispatchMessage($trackingData, [new AmqpStamp($this->routingKey)]);
 
-            return new JsonResponse(['status' => 'success']);
+            return new JsonResponse(['status' => 'success'], Response::HTTP_CREATED);
         }
 
         $errorMessages = [];
@@ -52,11 +53,12 @@ class TrackingDataController extends AbstractController
             $errorMessages[] = $error->getMessage();
         }
 
-        return new JsonResponse(['status' => 'error', 'data' => $errorMessages], 400);
+        return new JsonResponse(['status' => 'error', 'message' => $errorMessages], Response::HTTP_UNAUTHORIZED);
     }
 
     /**
-     * This method is used only for testing purpose
+     * This method is used only for testing purpose,
+     * it's show all tracking data only for authorized user
      *
      * @Route("/", name="read", methods={"GET"})
      *
@@ -65,9 +67,10 @@ class TrackingDataController extends AbstractController
      */
     public function readAction(TrackingDataRepository $trackingDataRepository): JsonResponse
     {
-        //TODO check admin token
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $responseData = $trackingDataRepository->fetchAll();
 
-        return new JsonResponse(['status' => 'success', 'data' => $responseData]);
+        return new JsonResponse(['status' => 'success', 'data' => $responseData], Response::HTTP_OK);
     }
 }

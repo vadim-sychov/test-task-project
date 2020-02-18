@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
-use App\Message\UserMessage;
+use App\ValueObject\User;
 use App\Repository\UserRepository;
-use SocialTech\StorageInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class UserCreateHandler implements MessageHandlerInterface
@@ -22,10 +21,10 @@ class UserCreateHandler implements MessageHandlerInterface
     }
 
     /**
-     * @param UserMessage $userMessage
+     * @param User $user
      */
-    public function __invoke(UserMessage $userMessage)
+    public function __invoke(User $user)
     {
-        $this->userRepository->createFromMessage($userMessage);
+        $this->userRepository->save($user);
     }
 }
