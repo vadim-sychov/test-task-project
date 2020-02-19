@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Validator\UserNicknameUniqueness;
 use App\ValueObject\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -26,7 +27,10 @@ class UserCreateType extends AbstractType
                 'constraints' => new NotBlank(['message' => 'Lastname parameter value should not be blank.'])
             ])
             ->add('nickname', TextType::class, [
-                'constraints' => new NotBlank(['message' => 'Nickname parameter value should not be blank.'])
+                'constraints' => [
+                    new NotBlank(['message' => 'Nickname parameter value should not be blank.']),
+                    new UserNicknameUniqueness()
+                ]
             ])
             ->add('password', TextType::class, [
                 'constraints' => new NotBlank(['message' => 'Password parameter value should not be blank.'])

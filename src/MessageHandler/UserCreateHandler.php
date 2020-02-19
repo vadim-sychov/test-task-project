@@ -25,6 +25,10 @@ class UserCreateHandler implements MessageHandlerInterface
      */
     public function __invoke(User $user)
     {
-        $this->userRepository->save($user);
+        $existingUser = $this->userRepository->findBy('nickname', $user->getNickname());
+
+        if (is_null($existingUser)) {
+            $this->userRepository->save($user);
+        }
     }
 }
