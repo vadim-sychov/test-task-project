@@ -62,6 +62,9 @@ services:
         arguments:
             $storagePath: '%storage_path%/%env(STORAGE_FILENAME_TRACKING_DATA)%.json'
 
+    Symfony\Component\Security\Core\User\UserInterface:
+        class: App\ValueObject\User
+
     SocialTech\SlowStorage:
         class: SocialTech\SlowStorage
 

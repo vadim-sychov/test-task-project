@@ -28,9 +28,9 @@ class User implements UserInterface
     private $roles = [];
 
     /**
-     * @return int
+     * @return null|int
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -55,10 +55,10 @@ class User implements UserInterface
     }
 
     /**
-     * @param string $firstName
+     * @param null|string $firstName
      * @return self
      */
-    public function setFirstName(string $firstName): self
+    public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
 
