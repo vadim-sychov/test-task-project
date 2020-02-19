@@ -30,9 +30,9 @@ class TrackingData
     }
 
     /**
-     * @param string $userId
+     * @param null|string $userId
      */
-    public function setUserId(string $userId): void
+    public function setUserId(?string $userId): void
     {
         $this->userId = $userId;
     }

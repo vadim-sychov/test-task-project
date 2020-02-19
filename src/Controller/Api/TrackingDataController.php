@@ -5,13 +5,13 @@ namespace App\Controller\Api;
 
 use App\Form\TrackingDataCreateType;
 use App\ValueObject\TrackingData;
-use App\Repository\TrackingDataRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Transport\AmqpExt\AmqpStamp;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/api/tracking-data", name="api_tracking_data_")
@@ -33,11 +33,13 @@ class TrackingDataController extends AbstractController
      * @Route("/", name="create", methods={"POST"})
      *
      * @param Request $request
+     * @param UserInterface $user
      * @return JsonResponse
      */
-    public function createAction(Request $request): JsonResponse
+    public function createAction(Request $request, UserInterface $user): JsonResponse
     {
         $trackingData = new TrackingData();
+        $trackingData->setUserId($this->getUserIdForTrackingData($request, $user));
 
         $form = $this->createForm(TrackingDataCreateType::class, $trackingData);
         $form->submit(json_decode($request->getContent(),true));
@@ -57,20 +59,23 @@ class TrackingDataController extends AbstractController
     }
 
     /**
-     * This method is used only for testing purpose,
-     * it's show all tracking data only for authorized user
+     * Get userId for trackingData from current userId if it's an authorized user
+     * or get USER-AGENT-TOKEN header if its unknown user
      *
-     * @Route("/", name="read", methods={"GET"})
-     *
-     * @param TrackingDataRepository $trackingDataRepository
-     * @return JsonResponse
+     * @param Request $request
+     * @param UserInterface $user
+     * @return string|null
      */
-    public function readAction(TrackingDataRepository $trackingDataRepository): JsonResponse
+    private function getUserIdForTrackingData(Request $request, UserInterface $user): ?string
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $userId = null;
 
-        $responseData = $trackingDataRepository->fetchAll();
+        if (!is_null($user->getId())) {
+            $userId = (string) $user->getId();
+        } elseif ($request->headers->has('USER-AGENT-TOKEN')) {
+            $userId = $request->headers->get('USER-AGENT-TOKEN');
+        }
 
-        return new JsonResponse(['status' => 'success', 'data' => $responseData], Response::HTTP_OK);
+        return $userId;
     }
 }
