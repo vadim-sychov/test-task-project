@@ -59,6 +59,10 @@ class TrackingDataRepository
      */
     public function fetchAll(): array
     {
+        if (!$this->fileStorage->exists($this->storagePath)) {
+            return [];
+        }
+
         $fileStorageData = $this->fileStorage->load($this->storagePath);
 
         return json_decode($fileStorageData, true);

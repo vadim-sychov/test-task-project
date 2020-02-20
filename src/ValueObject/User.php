@@ -74,10 +74,10 @@ class User implements UserInterface
     }
 
     /**
-     * @param string $lastName
+     * @param null|string $lastName
      * @return self
      */
-    public function setLastName(string $lastName): self
+    public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
 
@@ -93,10 +93,10 @@ class User implements UserInterface
     }
 
     /**
-     * @param string $nickname
+     * @param null|string $nickname
      * @return $this
      */
-    public function setNickname(string $nickname): self
+    public function setNickname(?string $nickname): self
     {
         $this->nickname = $nickname;
 
@@ -106,16 +106,16 @@ class User implements UserInterface
     /**
      * @inheritDoc
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return (string) $this->password;
     }
 
     /**
-     * @param string $password
+     * @param null|string $password
      * @return $this
      */
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
 
@@ -132,9 +132,9 @@ class User implements UserInterface
 
     /**
      * @param int $age
-     * @return self
+     * @return null|self
      */
-    public function setAge(int $age): self
+    public function setAge(?int $age): self
     {
         $this->age = $age;
 

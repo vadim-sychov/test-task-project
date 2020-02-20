@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Auth{% endblock title %}
+
+{% block body %}
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <form class="col-12" id="auth_form" method="post">
+                <div class="form-group">
+                    <label for="formGroupExampleInput">Nickname:</label>
+                    <input type="text" name="nickname" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="formGroupExampleInput2">Password:</label>
+                    <input type="password" name="password" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-success" data-tracking="true" data-source-label="auth_submit">
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block javascripts %}
+    <script>
+        $("#auth_form").submit(function(event) {
+            event.preventDefault();
+
+            let jsonData = getJsonFromFormArray($(this).serializeArray());
+
+            $.ajax({
+                type: "POST",
+                url: '{{ path('api_auth') }}',
+                data: jsonData,
+                dataType: 'json',
+                success: function(jsonData) {
+                    // Save auth token to cookie (this will be passed to request headers next)
+                    $.cookie('X-AUTH-TOKEN', jsonData["X-AUTH-TOKEN"]);
+
+                    if (jsonData.status === 'success') {
+                        alert('You have successfully logged in, X-AUTH-TOKEN:' + jsonData["X-AUTH-TOKEN"]);
+                    }
+                },
+                error: function(data) {
+                    let errorMessage = data.responseJSON.message;
+
+                    if (typeof errorMessage === 'object') {
+                        console.log(1);
+                        alert(errorMessage.join('\n'));
+                    } else if(typeof errorMessage === 'string') {
+                        alert(errorMessage);
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

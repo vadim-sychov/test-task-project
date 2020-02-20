@@ -74,7 +74,7 @@ class UserRepository
      */
     public function findBy(string $field, string $value): ?User
     {
-        $usersData = json_decode($this->fileStorage->load($this->storagePath), true);
+        $usersData = $this->fetchAll();
 
         foreach ($usersData as $userData) {
             if ($userData[$field] === $value) {
@@ -123,6 +123,10 @@ class UserRepository
      */
     public function fetchAll(): array
     {
+        if (!$this->fileStorage->exists($this->storagePath)) {
+            return [];
+        }
+
         $fileStorageData = $this->fileStorage->load($this->storagePath);
 
         return json_decode($fileStorageData, true);

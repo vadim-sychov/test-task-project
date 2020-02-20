@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Transport\AmqpExt\AmqpStamp;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @Route("/api/users", name="api_users_")
@@ -60,5 +59,20 @@ class UserController extends AbstractController
         }
 
         return new JsonResponse(['status' => 'error', 'message' => $errorMessages], Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * @Route("/", name="get_all", methods={"GET"})
+     *
+     * This method is used only for testing purpose
+     *
+     * @param UserRepository $userRepository
+     * @return JsonResponse
+     */
+    public function getAllAction(UserRepository $userRepository): JsonResponse
+    {
+        $users = $userRepository->fetchAll();
+
+        return new JsonResponse(['status' => 'success', 'data' => $users], Response::HTTP_OK);
     }
 }
