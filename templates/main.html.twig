@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Main{% endblock title %}
+
+{% block body %}
+    <div class="container h-100">
+        <div class="row align-items-center h-100 jumbotron" >
+            <div class="col text-right">
+                <a href="{{ path('user_register') }}" data-tracking="true" data-source-label="register_redirected">Register</a>
+            </div>
+            <div class="col align-self-end">
+                <a href="{{ path('user_auth') }}" data-tracking="true" data-source-label="auth_redirected">Login</a>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

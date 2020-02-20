@@ -56,7 +56,7 @@ class AuthController extends AbstractController
             if (!is_null($user) && $this->passwordEncoder->isPasswordValid($user, $requestData['password'])) {
                 $authToken = $this->userRepository->createAuthTokenForUser($user);
 
-                return new JsonResponse(['status' => 'success', 'auth_token' => $authToken]);
+                return new JsonResponse(['status' => 'success', 'X-AUTH-TOKEN' => $authToken], Response::HTTP_OK);
             }
         }
 

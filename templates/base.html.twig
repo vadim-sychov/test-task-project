@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
+
+        <script>
+            // Create unique USER-AGENT-TOKEN to identify unauthorized user
+            if ($.cookie('USER-AGENT-TOKEN') === undefined) {
+                $.cookie('USER-AGENT-TOKEN', createUserAgentToken());
+            }
+
+            function createUserAgentToken() {
+                return CryptoJS.MD5(Math.random().toString(36).substring(2, 15)).toString()
+            }
+
+            // Serialize data function
+            function getJsonFromFormArray(formArray) {
+                var returnArray = {};
+
+                for (var i = 0; i < formArray.length; i++){
+                    returnArray[formArray[i]['name']] = formArray[i]['value'];
+                }
+
+                return JSON.stringify(returnArray);
+            }
+
+            function sendTrackingData(sourceLabelData) {
+                let data = JSON.stringify({source_label: sourceLabelData});
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ path('api_tracking_data_create') }}',
+                    data: data,
+                    dataType: 'json',
+                    headers: {
+                        'X-AUTH-TOKEN': $.cookie('X-AUTH-TOKEN'),
+                        'USER-AGENT-TOKEN': $.cookie('USER-AGENT-TOKEN')
+                    }
+                });
+            }
+
+            $('[data-tracking="true"]').click(function() {
+                let sourceLabelData = $(this).attr('data-source-label');
+
+                sendTrackingData(sourceLabelData);
+            })
+        </script>
+
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

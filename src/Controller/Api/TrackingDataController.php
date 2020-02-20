@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Form\TrackingDataCreateType;
+use App\Repository\TrackingDataRepository;
 use App\ValueObject\TrackingData;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -56,6 +57,21 @@ class TrackingDataController extends AbstractController
         }
 
         return new JsonResponse(['status' => 'error', 'message' => $errorMessages], Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @Route("/", name="get_all", methods={"GET"})
+     *
+     * This method is used only for testing purpose
+     *
+     * @param TrackingDataRepository $trackingDataRepository
+     * @return JsonResponse
+     */
+    public function getAllAction(TrackingDataRepository $trackingDataRepository): JsonResponse
+    {
+        $trackingData = $trackingDataRepository->fetchAll();
+
+        return new JsonResponse(['status' => 'success', 'data' => $trackingData], Response::HTTP_OK);
     }
 
     /**
